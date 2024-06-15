@@ -1,4 +1,5 @@
 
+import json
 import numpy as np
 import openai
 import os
@@ -12,7 +13,7 @@ if not api_key:
     print("API key not found in environment variables.")
     raise ValueError("No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>).")
 else:
-    print(f"API key found: {api_key[:5]}...{api_key[-5:]}")  # Log apenas uma parte da chave para verificar
+    print(f"API key found: {api_key[:5]}...{api_key[-5:]}")  # log de parte da chave para verificar
 
 openai.api_key = api_key
 
@@ -69,7 +70,8 @@ def split_text_into_chunks(text, max_tokens=4000):
 @app.route('/embed', methods=['POST'])
 def embed_text():
     """
-    Lê o arquivo de texto especificado e cria embeddings para o conteúdo.
+    Lê o arquivo de texto especificado e cria embeddings para o conteúdo,
+    salvando-os em um arquivo JSON no diretório 'data'.
 
     Returns:
         json: JSON contendo os embeddings ou uma mensagem de erro.
@@ -91,10 +93,16 @@ def embed_text():
     try:
         text_chunks = split_text_into_chunks(text, max_tokens=4000)
         embeddings = [create_embeddings(chunk) for chunk in text_chunks]
+
+        # Salvar os embeddings em um arquivo JSON no diretório 'data'
+        embeddings_file_path = os.path.join('/app/data', 'embeddings.json')
+        with open(embeddings_file_path, 'w', encoding='utf-8') as f:
+            json.dump([embedding.tolist() for embedding in embeddings], f)
+
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-    return jsonify({'embeddings': [embedding.tolist() for embedding in embeddings]})
+    return jsonify({'status': 'embeddings saved', 'file_path': embeddings_file_path})
 
 
 if __name__ == '__main__':
