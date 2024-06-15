@@ -94,7 +94,7 @@ def embed_text():
         text_chunks = split_text_into_chunks(text, max_tokens=4000)
         embeddings = [create_embeddings(chunk) for chunk in text_chunks]
 
-        # Salvar os embeddings em um arquivo JSON no diretório 'data'
+        # persiste os embeddings em um arquivo JSON no diretório 'data'
         embeddings_file_path = os.path.join('/app/data', 'embeddings.json')
         with open(embeddings_file_path, 'w', encoding='utf-8') as f:
             json.dump([embedding.tolist() for embedding in embeddings], f)
