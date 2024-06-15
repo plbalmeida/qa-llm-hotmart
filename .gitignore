@@ -2,3 +2,4 @@ venv
 .env
 extractor/data/*
 embeddings/data/*
+pinecone_storage/data/*
