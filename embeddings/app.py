@@ -22,6 +22,8 @@ else:
 client = OpenAI(api_key=openai_api_key)
 pc = Pinecone(api_key=pinecone_api_key)
 
+index_name = 'hotmart-blog-index'
+
 
 def sliding_chunks(iterable, chunk_size, overlap):
     """
@@ -52,8 +54,6 @@ def encode_and_storage(df):
     Args:
         df (pandas dataframe): O dataframe com chunks do texto original.
     """
-
-    index_name = 'hotmart-blog-index'
 
     pc.create_index(
         name=index_name,

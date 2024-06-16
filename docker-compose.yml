@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  extractor:
+    build: ./extractor
+    container_name: extractor
+    volumes:
+      - ./data:/app/data
+    environment:
+      - PYTHONUNBUFFERED=1
+
+  embeddings:
+    build: ./embeddings
+    container_name: embeddings
+    volumes:
+      - ./data:/app/data
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+
+  api:
+    build: ./api
+    container_name: api
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - PINECONE_API_KEY=${PINECONE_API_KEY}
+      - PINECONE_ENVIRONMENT=${PINECONE_ENVIRONMENT}
+
+volumes:
+  data:
