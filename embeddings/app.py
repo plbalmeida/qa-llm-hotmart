@@ -1,20 +1,26 @@
 import itertools
-import json
+import numpy as np
 import os
+import pandas as pd
 from flask import Flask, request, jsonify
 from openai import OpenAI
+from pinecone.grpc import PineconeGRPC as Pinecone
+from pinecone import ServerlessSpec
+from uuid import uuid4
 
 
 app = Flask(__name__)
 
 openai_api_key = os.getenv('OPENAI_API_KEY')
-if not openai_api_key:
-    print("OPENAI_API_KEY key not found in environment variables.")
-    raise ValueError("No OPENAI_API_KEY provided. You can set your OPENAI_API_KEY")
+pinecone_api_key = os.getenv('PINECONE_API_KEY')
+if not openai_api_key or not pinecone_api_key:
+    print("OPENAI_API_KEY or PINECONE_API_KEY not found in environment variables.")
+    raise ValueError("No OPENAI_API_KEY or PINECONE_API_KEY provided.")
 else:
     print(f"API key found: {openai_api_key[:5]}...{openai_api_key[-5:]}")  # log de parte da chave para verificar
 
 client = OpenAI(api_key=openai_api_key)
+pc = Pinecone(api_key=pinecone_api_key)
 
 
 def sliding_chunks(iterable, chunk_size, overlap):
@@ -39,34 +45,49 @@ def sliding_chunks(iterable, chunk_size, overlap):
         chunk = chunk[overlap:] + tuple(itertools.islice(it, chunk_size - overlap))
 
 
-def create_embeddings(text):
+def encode_and_storage(df):
     """
-    Cria embeddings para o texto fornecido usando a API da OpenAI.
+    Faz oembedding e grava os vetores no Pinecone.
 
     Args:
-        text (str): Texto para o qual os embeddings serão criados.
-
-    Returns:
-        np.array: Embeddings gerados.
+        df (pandas dataframe): O dataframe com chunks do texto original.
     """
-    text = text.replace("\n", " ")
 
-    response = client.embeddings.create(
-        input=text,
-        model="text-embedding-ada-002"
+    index_name = 'hotmart-blog-index'
+
+    pc.create_index(
+        name=index_name,
+        dimension=1536,
+        spec=ServerlessSpec(
+            cloud='aws',
+            region='us-east-1'
+        )
     )
 
-    return response.data[0].embedding
+    index = pc.Index(index_name)
+
+    batch_limit = 100
+
+    for batch in np.array_split(df, len(df) / batch_limit):
+
+        metadatas = [{"text": row['text']} for _, row in batch.iterrows()]
+        texts = batch['text'].tolist()
+
+        ids = [str(uuid4()) for _ in range(len(texts))]
+
+        # encode do texto com OpenAI
+        response = client.embeddings.create(input=texts, model='text-embedding-3-small')
+        embeds = [np.array(x.embedding) for x in response.data]
+
+        # upsert dos vetores no Pinecone
+        index.upsert(vectors=zip(ids, embeds, metadatas), namespace=index_name)
 
 
 @app.route('/embed', methods=['POST'])
 def embed_text():
     """
     Lê o arquivo de texto especificado e cria embeddings para o conteúdo,
-    salvando-os em um arquivo JSON no diretório 'data'.
-
-    Returns:
-        json: JSON contendo os embeddings ou uma mensagem de erro.
+    salvando-os no Pinecone.
     """
     data = request.json
     file_path = data.get('file_path')
@@ -84,17 +105,12 @@ def embed_text():
 
     try:
         text_chunks = [f"{' '.join(chunk)}" for chunk in sliding_chunks(lines, chunk_size=100, overlap=50)]
-        embeddings = [create_embeddings(text_chunks[i]) for i in range(0, len(text_chunks))]
-
-        # persiste os embeddings em um arquivo JSON no diretório 'data'
-        embeddings_file_path = os.path.join('data', 'embeddings.json')
-        with open(embeddings_file_path, 'w', encoding='utf-8') as f:
-            json.dump(embeddings, f)
-
+        chunks_df = pd.DataFrame({"text": text_chunks})
+        encode_and_storage(chunks_df)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-    return jsonify({'status': 'embeddings saved', 'file_path': embeddings_file_path})
+    return jsonify({'status': 'embeddings saved'})
 
 
 if __name__ == '__main__':
