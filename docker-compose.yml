@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   extractor:
-    build: ./extractor
+    build: ./src/extractor
     container_name: extractor
     ports:
       - "5001:5001"
@@ -12,7 +12,7 @@ services:
       - PYTHONUNBUFFERED=1
 
   embeddings:
-    build: ./embeddings
+    build: ./src/embeddings
     container_name: embeddings
     depends_on:
       - extractor
@@ -24,7 +24,7 @@ services:
       - .env
 
   api:
-    build: ./api
+    build: ./src/api
     container_name: api
     depends_on:
       - embeddings
