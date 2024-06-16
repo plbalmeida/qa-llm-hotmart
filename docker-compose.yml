@@ -6,8 +6,6 @@ services:
     container_name: extractor
     ports:
       - "5001:5001"
-    volumes:
-      - ./data:/app/data
     environment:
       - PYTHONUNBUFFERED=1
 
@@ -18,8 +16,6 @@ services:
       - extractor
     ports:
       - "5002:5002"
-    volumes:
-      - ./data:/app/data
     env_file:
       - .env
 

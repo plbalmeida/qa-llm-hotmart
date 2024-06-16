@@ -16,23 +16,7 @@ O projeto foi desenvolvido com a seguinte stack: Python, Docker, Open AI, Pineco
 Estrutura do repositório:
 
 ```
-qa-llm-hotmart
-├── README.md
-├── api
-│   ├── Dockerfile
-│   ├── app.py
-│   └── requirements.txt
-├── data
-│   └── extracted_text.txt
-├── docker-compose.yml
-├── embeddings
-│   ├── Dockerfile
-│   ├── app.py
-│   └── requirements.txt
-└── extractor
-    ├── Dockerfile
-    ├── app.py
-    └── requirements.txt
+
 ```
 
 Para execução do presente projeto, é preciso clonar o repositório:
