@@ -4,6 +4,8 @@ services:
   extractor:
     build: ./extractor
     container_name: extractor
+    ports:
+      - "5001:5001"
     volumes:
       - ./data:/app/data
     environment:
@@ -12,18 +14,20 @@ services:
   embeddings:
     build: ./embeddings
     container_name: embeddings
+    ports:
+      - "5002:5002"
     volumes:
       - ./data:/app/data
-    environment:
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    env_file:
+      - .env
 
   api:
     build: ./api
     container_name: api
-    environment:
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
-      - PINECONE_API_KEY=${PINECONE_API_KEY}
-      - PINECONE_ENVIRONMENT=${PINECONE_ENVIRONMENT}
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
 
 volumes:
   data:
