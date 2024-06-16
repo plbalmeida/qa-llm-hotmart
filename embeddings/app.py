@@ -23,6 +23,18 @@ client = OpenAI(api_key=openai_api_key)
 pc = Pinecone(api_key=pinecone_api_key)
 
 index_name = 'hotmart-blog-index'
+if index_name not in pc.list_indexes().names():
+    print(f"Creating index: {index_name}")
+    pc.create_index(
+        name=index_name,
+        dimension=1536,
+        spec=ServerlessSpec(
+            cloud='aws',
+            region='us-east-1'
+        )
+    )
+
+index = pc.Index(index_name)    
 
 
 def sliding_chunks(iterable, chunk_size, overlap):
@@ -54,18 +66,6 @@ def encode_and_storage(df):
     Args:
         df (pandas dataframe): O dataframe com chunks do texto original.
     """
-
-    pc.create_index(
-        name=index_name,
-        dimension=1536,
-        spec=ServerlessSpec(
-            cloud='aws',
-            region='us-east-1'
-        )
-    )
-
-    index = pc.Index(index_name)
-
     batch_limit = 100
 
     for batch in np.array_split(df, len(df) / batch_limit):

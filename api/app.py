@@ -3,6 +3,8 @@ import os
 from flask import Flask, request, jsonify
 from openai import OpenAI
 from pinecone.grpc import PineconeGRPC as Pinecone
+from pinecone import ServerlessSpec
+
 
 app = Flask(__name__)
 
@@ -16,6 +18,17 @@ client = OpenAI(api_key=openai_api_key)
 pc = Pinecone(api_key=pinecone_api_key)
 
 index_name = 'hotmart-blog-index'
+if index_name not in pc.list_indexes().names():
+    print(f"Creating index: {index_name}")
+    pc.create_index(
+        name=index_name,
+        dimension=1536,
+        spec=ServerlessSpec(
+            cloud='aws',
+            region='us-east-1'
+        )
+    )
+
 index = pc.Index(index_name)
 
 
