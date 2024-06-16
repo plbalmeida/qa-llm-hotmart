@@ -21,6 +21,7 @@ client = OpenAI(api_key=openai_api_key)
 pc = Pinecone(api_key=pinecone_api_key)
 
 index_name = 'hotmart-blog-index'
+
 if index_name not in pc.list_indexes().names():
     print(f"Creating index: {index_name}")
     pc.create_index(
