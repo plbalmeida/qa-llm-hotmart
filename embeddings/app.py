@@ -1,21 +1,42 @@
-
+import itertools
 import json
-import numpy as np
-import openai
 import os
 from flask import Flask, request, jsonify
+from openai import OpenAI
 
 
 app = Flask(__name__)
 
-api_key = os.getenv('OPENAI_API_KEY')
-if not api_key:
-    print("API key not found in environment variables.")
-    raise ValueError("No API key provided. You can set your API key in code using 'openai.api_key = <API-KEY>', or you can set the environment variable OPENAI_API_KEY=<API-KEY>).")
+openai_api_key = os.getenv('OPENAI_API_KEY')
+if not openai_api_key:
+    print("OPENAI_API_KEY key not found in environment variables.")
+    raise ValueError("No OPENAI_API_KEY provided. You can set your OPENAI_API_KEY")
 else:
-    print(f"API key found: {api_key[:5]}...{api_key[-5:]}")  # log de parte da chave para verificar
+    print(f"API key found: {openai_api_key[:5]}...{openai_api_key[-5:]}")  # log de parte da chave para verificar
 
-openai.api_key = api_key
+client = OpenAI(api_key=openai_api_key)
+
+
+def sliding_chunks(iterable, chunk_size, overlap):
+    """
+    Gera chunks sobrepostos de um iterável.
+
+    Args:
+        iterable (iterável): O iterável a partir do qual os chunks serão gerados.
+        chunk_size (int): O tamanho de cada pedaço.
+        overlap (int): O número de elementos que irão se sobrepor entre os chunks consecutivos.
+
+    Returns:
+        iterador: Um iterador que produz chunks sobrepostos do iterável original.
+    """
+    if chunk_size <= overlap:
+        raise ValueError("chunk_size deve ser maior que overlap")
+
+    it = iter(iterable)
+    chunk = tuple(itertools.islice(it, chunk_size))
+    while len(chunk) == chunk_size:
+        yield chunk
+        chunk = chunk[overlap:] + tuple(itertools.islice(it, chunk_size - overlap))
 
 
 def create_embeddings(text):
@@ -28,43 +49,14 @@ def create_embeddings(text):
     Returns:
         np.array: Embeddings gerados.
     """
-    response = openai.Embedding.create(
+    text = text.replace("\n", " ")
+
+    response = client.embeddings.create(
         input=text,
         model="text-embedding-ada-002"
     )
-    return np.array(response['data'][0]['embedding'])
 
-
-def split_text_into_chunks(text, max_tokens=4000):
-    """
-    Divide o texto em partes menores para ficar dentro do limite de tokens do modelo.
-
-    Args:
-        text (str): Texto a ser dividido.
-        max_tokens (int): Máximo de tokens por parte.
-
-    Returns:
-        List[str]: Lista de partes de texto.
-    """
-    words = text.split()
-    chunks = []
-    current_chunk = []
-
-    current_chunk_length = 0
-    for word in words:
-        word_length = len(word)
-        if current_chunk_length + word_length + 1 > max_tokens:
-            chunks.append(" ".join(current_chunk))
-            current_chunk = [word]
-            current_chunk_length = word_length
-        else:
-            current_chunk.append(word)
-            current_chunk_length += word_length + 1
-
-    if current_chunk:
-        chunks.append(" ".join(current_chunk))
-
-    return chunks
+    return response.data[0].embedding
 
 
 @app.route('/embed', methods=['POST'])
@@ -84,20 +76,20 @@ def embed_text():
 
     try:
         with open(file_path, "r", encoding="utf-8") as file:
-            text = file.read()
+            lines = file.read().split()
     except FileNotFoundError:
         return jsonify({'error': 'File not found'}), 404
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
     try:
-        text_chunks = split_text_into_chunks(text, max_tokens=4000)
-        embeddings = [create_embeddings(chunk) for chunk in text_chunks]
+        text_chunks = [f"{' '.join(chunk)}" for chunk in sliding_chunks(lines, chunk_size=100, overlap=50)]
+        embeddings = [create_embeddings(text_chunks[i]) for i in range(0, len(text_chunks))]
 
         # persiste os embeddings em um arquivo JSON no diretório 'data'
-        embeddings_file_path = os.path.join('/app/data', 'embeddings.json')
+        embeddings_file_path = os.path.join('data', 'embeddings.json')
         with open(embeddings_file_path, 'w', encoding='utf-8') as f:
-            json.dump([embedding.tolist() for embedding in embeddings], f)
+            json.dump(embeddings, f)
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
