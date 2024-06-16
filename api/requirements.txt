@@ -1,0 +1,3 @@
+Flask==2.3.2
+openai==1.34.0
+pinecone-client[grpc]==4.1.1
