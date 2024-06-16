@@ -87,6 +87,12 @@ curl -X POST \
 }
 ```
 
+Para desligar as aplicações, executar no terminal:
+
+```bash
+docker-compose down
+```
+
 ## Contribuições
 
 Contribuições são bem-vindas. Para contribuir, por favor, crie um pull request para revisão.
