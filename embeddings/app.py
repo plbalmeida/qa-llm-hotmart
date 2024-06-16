@@ -13,11 +13,9 @@ app = Flask(__name__)
 
 openai_api_key = os.getenv('OPENAI_API_KEY')
 pinecone_api_key = os.getenv('PINECONE_API_KEY')
+
 if not openai_api_key or not pinecone_api_key:
-    print("OPENAI_API_KEY or PINECONE_API_KEY not found in environment variables.")
     raise ValueError("No OPENAI_API_KEY or PINECONE_API_KEY provided.")
-else:
-    print(f"API key found: {openai_api_key[:5]}...{openai_api_key[-5:]}")  # log de parte da chave para verificar
 
 client = OpenAI(api_key=openai_api_key)
 pc = Pinecone(api_key=pinecone_api_key)

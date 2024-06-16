@@ -33,7 +33,13 @@ qa-llm-hotmart
     └── requirements.txt
 ```
 
-Para execução do presente projeto é necessário inserir as secrets keys do Pinecone e da Open AI no arquivo `.env` ma raíz do repositório:
+Para execução do presente projeto, é preciso clonar o repositório:
+
+```bash
+git clone https://github.com/plbalmeida/qa-llm-hotmart.git
+```
+
+É necessário inserir as secrets keys do Pinecone e da Open AI no arquivo `.env` ma raíz do repositório:
 
 ```.env
 OPENAI_API_KEY=

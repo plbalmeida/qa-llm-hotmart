@@ -12,7 +12,7 @@ openai_api_key = os.getenv('OPENAI_API_KEY')
 pinecone_api_key = os.getenv('PINECONE_API_KEY')
 
 if not openai_api_key or not pinecone_api_key:
-    raise ValueError("OPENAI_API_KEY and/or PINECONE_API_KEY must be set.")
+    raise ValueError("No OPENAI_API_KEY or PINECONE_API_KEY must be set.")
 
 client = OpenAI(api_key=openai_api_key)
 pc = Pinecone(api_key=pinecone_api_key)
