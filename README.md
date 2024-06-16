@@ -6,10 +6,12 @@
 
 A solução consiste em uma arquitetura RAG (Retrieval-Augmented Generation), o qual possui as seguintes componentes:
 - componente `extractor` para extração de texto de uma URL;
-- a componente `embeddings` para realização de chunks, embeddings e upser dos vetores no banco de dados vetorial do Pinecone (https://www.pinecone.io/);
-- e a componente `api` que realiza a recuperação por busca semântica no banco de dados vetorial, e que utiliza o `gpt-3.5-turbo` da Open AI (https://platform.openai.com/docs/overview) para responder perguntas da base de conhecimento construída;  
+- a componente `embeddings` para realização de chunks, embeddings e upsert dos vetores no banco de dados vetorial do Pinecone (https://www.pinecone.io/);
+- e a componente `api` que realiza a recuperação por busca semântica no banco de dados vetorial, e que utiliza o `gpt-3.5-turbo` da Open AI (https://platform.openai.com/docs/overview) para responder perguntas da base de conhecimento utilizada;  
 
 As três componentes são provisionadas localmente com `docker-compose.yml`.
+
+O projeto foi desenvolvido com a seguinte stack: Python, Docker, Open AI, Pinecode e git.
 
 Estrutura do repositório:
 
@@ -39,20 +41,20 @@ Para execução do presente projeto, é preciso clonar o repositório:
 git clone https://github.com/plbalmeida/qa-llm-hotmart.git
 ```
 
-É necessário inserir as secrets keys do Pinecone e da Open AI no arquivo `.env` ma raíz do repositório:
+É necessário inserir as secrets keys do Pinecone e da Open AI no arquivo `.env` na raíz do repositório:
 
 ```.env
 OPENAI_API_KEY=
 PINECONE_API_KEY=
 ```
 
-Após é necessário executar no terminal o seguinte comando na raíz do respositório para fazer o build do `docker-compe.yml` para provisionar as aplicações necessárias:
+Após é necessário executar no terminal o seguinte comando na raíz do respositório para fazer o build do `docker-compose.yml` para provisionar as aplicações necessárias:
 
 ```bash
 docker-compose up --build
 ```
 
-Após a execução, é esperado que as plicações estejam rodando, executando o comando `docker ps` no terminal, é esperado o seguinte retorno:
+Após a execução, é esperado que as aplicações estejam rodando localmente, executando o comando `docker ps` no terminal, é esperado o seguinte retorno o qual evidencia que cada aplicação está rodando:
 
 ```bash
 CONTAINER ID   IMAGE                       COMMAND           CREATED          STATUS          PORTS                    NAMES
@@ -61,7 +63,7 @@ df4754ff4315   qa-llm-hotmart-api          "python app.py"   18 minutes ago   Up
 ea682709e06f   qa-llm-hotmart-extractor    "python app.py"   18 minutes ago   Up 18 minutes   0.0.0.0:5001->5001/tcp   extractor
 ```
 
-Com a execução do serviço `extract` a extração de texto dado a URL fornecida é persistida no diretório `data`:
+Com a execução do serviço `extract`, a extração de texto da URL fornecida é persistida no diretório `data`:
 ```bash
 curl -X POST \
     http://localhost:5001/extract \
@@ -77,7 +79,7 @@ curl -X POST \
     -d '{"file_path": "data/extracted_text.txt"}'
 ```
 
-Para execução da aplicação de chatGPT com domínio sobre a Hotmart através do serviço `qa`:  
+Por fim, com a execução da aplicação `qa`, é possível usar GPT da Open AI para fazer perguntas sobre o domínio do texto encontrado na URL fornecida:  
 ```bash
 curl -X POST \
     http://localhost:5000/qa \
@@ -85,7 +87,7 @@ curl -X POST \
     -d '{"question": "O que a Hotmart faz?"}'
 ```
 
-É esperado como retorno algo semelhante a resposta a seguir:
+É esperado com o retorno algo semelhante a resposta a seguir:
 
 ```bash
 {
