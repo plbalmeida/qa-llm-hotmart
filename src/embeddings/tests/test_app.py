@@ -8,6 +8,9 @@ from embeddings.app import app, encode_and_storage  # noqa 401
 
 @pytest.fixture
 def client():
+    """
+    Configura o cliente de teste do Flask para o aplicativo.
+    """
     db_fd, app.config['DATABASE'] = tempfile.mkstemp()
     app.config['TESTING'] = True
     client = app.test_client()
@@ -18,8 +21,8 @@ def client():
     os.unlink(app.config['DATABASE'])
 
 
-@patch('src.embeddings.app.open')
-@patch('src.embeddings.app.encode_and_storage')
+@patch('builtins.open')
+@patch('embeddings.app.encode_and_storage')
 def test_embed_text(mock_encode_and_storage, mock_open, client):
     """
     Testa a leitura de um arquivo de texto e verifica se os embeddings são salvos corretamente.
