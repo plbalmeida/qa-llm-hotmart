@@ -87,6 +87,10 @@ curl -X POST \
     -d '{"file_path": "data/extracted_text.txt"}'
 ```
 
+Com isso é esperado o upsert dos vetores no Pinecone:
+
+![](figures/pinecone_console.png)
+
 Por fim, com a execução da aplicação `qa`, é possível usar GPT da Open AI para fazer perguntas sobre o domínio do texto encontrado na URL fornecida:  
 ```bash
 curl -X POST \
@@ -103,11 +107,47 @@ curl -X POST \
 }
 ```
 
+Mais um exemplo de uso da aplicação:
+
+```bash
+curl -X POST \
+    http://localhost:5000/qa \
+    -H "Content-Type: application/json" \
+    -d '{"question": "Como os clientes s beneficiam em hospedar seus serviços na Hotmart"}'
+```
+
+É esperado com o retorno semelhante a resposta a seguir:
+
+```bash
+{
+    "answer": "Os clientes se beneficiam ao hospedar seus serviços na Hotmart de várias maneiras. Alguns dos benefícios incluem faturar 35% a mais sem aumentar o esforço operacional, ter acesso a uma plataforma EAD que hospeda cursos online e processa pagamentos online em um só lugar, contar com soluções para escalar negócios digitais, ter um relacionamento mais próximo com clientes reais e potenciais, não precisar contratar especialistas para desenvolver sistemas complexos, simplificar processos para focar na qualidade do conteúdo, definir horários de trabalho e utilizar técnicas de divulgação de produtos. Além disso, a Hotmart oferece infraestrutura de armazenamento segura, solução exclusiva para pagamentos online (inclusive internacionais), entrega automatizada de conteúdos aos compradores, distribuição automática de comissões para afiliados e diversas ferramentas para aumentar as vendas, como Order Bump e Funil de Vendas."
+}
+```
+
 Para desligar as aplicações, executar no terminal:
 
 ```bash
 docker-compose down
 ```
+
+## Esteira de CI/CD
+
+Foi criada um esteira de CI/CD com jons de lint para checagem de estilo do código, testes unitários e deploy.
+
+Ao realizar o merge para branch `main`, o mesmo é executado:
+
+![](figures/github_actions.png)
+
+Reforçando que para esse projeto, o job de deploy não coloca a aplicação em nenhum serviço. Para checar o funcionamento local da aplicação, executar o comando `docker-compose up --build` como mencionado anteriormente.
+
+## Sugestões de melhoria da aplicação
+
+Algumas sugestões de melhoria:
+
+- Adicionar mais testes unitários: adicionar mais testes para cobrir cenários adicionais e garantir uma maior cobertura de código;
+- Cobertura de testes: criação de job de checagem de cobertura de testes pelas aplicações na esteira de CI/CD;
+- Automação de deploy em diferentes ambientes: automatizar o deploy para diferentes ambientes (desenvolvimento, homologação, produção) com diferentes pipelines;
+- Monitoração e alertas: configuração de monitoramento e alertas para avaliação de performarce dos serviços e do modelo de LLM provisionado;
 
 ## Contribuições
 
