@@ -119,7 +119,7 @@ Mais um exemplo de uso da aplicação:
 curl -X POST \
     http://localhost:5000/qa \
     -H "Content-Type: application/json" \
-    -d '{"question": "Como os clientes s beneficiam em hospedar seus serviços na Hotmart"}'
+    -d '{"question": "Como os clientes se beneficiam em hospedar seus serviços na Hotmart"}'
 ```
 
 É esperado com o retorno semelhante a resposta a seguir:
