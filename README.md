@@ -11,9 +11,15 @@ A solução consiste em uma arquitetura RAG (Retrieval-Augmented Generation), o 
 
 As três componentes são provisionadas localmente com `docker-compose.yml`.
 
-O projeto foi desenvolvido com a seguinte stack: Python, Docker, Open AI, Pinecode, git e GitHub Actions.
+O projeto foi desenvolvido com a seguinte stack: 
+- `**Python**`: para criação dos scripts e implementação da solução;
+- `**Docker**`: para containerizar a solução;
+- `**Open AI**`: como a API de modelo treinado de LLM para a geração de texto e tarefa de embedding;
+- `**Pinecode**`: para banco de dados de vetores;
+- `**git**`: para versionamento de código;
+-`**GitHub Actions**`: para esteira de CI/CD, nesse projeto o foco maior é para a parte de CI;
 
-Estrutura do repositório:
+Oprojeto tem a seguinte estrutura do repositório:
 
 ```
 ├── README.md
@@ -132,7 +138,7 @@ docker-compose down
 
 ## Esteira de CI/CD
 
-Foi criada um esteira de CI/CD com jons de lint para checagem de estilo do código, testes unitários e deploy.
+Foi criada um esteira de CI/CD com jobs de lint para checagem de estilo do código, testes unitários e deploy.
 
 Para funcionar, é necessário colocar as chaves no secrets do projeto:
 
@@ -142,7 +148,7 @@ Ao realizar o merge para branch `main`, o mesmo é executado:
 
 ![](figures/github_actions.png)
 
-Reforçando que para esse projeto, o job de deploy não coloca a aplicação em nenhum serviço. Para checar o funcionamento local da aplicação, executar o comando `docker-compose up --build` como mencionado anteriormente.
+Reforçando que para esse projeto, o job de deploy não coloca a aplicação em nenhum serviço, nesse projeto o foco maior é para a parte de CI. Para checar o funcionamento local da aplicação, executar o comando `docker-compose up --build` como mencionado anteriormente.
 
 ## Sugestões de melhoria da aplicação
 
