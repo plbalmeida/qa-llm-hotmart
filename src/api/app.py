@@ -17,18 +17,22 @@ if not openai_api_key or not pinecone_api_key:
 client = OpenAI(api_key=openai_api_key)
 pc = Pinecone(api_key=pinecone_api_key)
 
-index_name = 'hotmart-blog-index'
+index_name = 'data-vectors-index'
 
 if index_name not in pc.list_indexes().names():
-    print(f"Creating index: {index_name}")
-    pc.create_index(
-        name=index_name,
-        dimension=1536,
-        spec=ServerlessSpec(
-            cloud='aws',
-            region='us-east-1'
+    try:
+        print(f"Creating index: {index_name}")
+        pc.create_index(
+            name=index_name,
+            dimension=1536,
+            spec=ServerlessSpec(
+                cloud='aws',
+                region='us-east-1'
+            )
         )
-    )
+    except Exception as e:
+        print(e)
+        pass
 
 index = pc.Index(index_name)
 
@@ -52,7 +56,13 @@ def retrieve(query, top_k, namespace, emb_model):
     )
 
     query_emb = query_response.data[0].embedding
-    docs = index.query(vector=query_emb, top_k=top_k, namespace=namespace, include_metadata=True)
+
+    docs = index.query(
+        vector=query_emb,
+        top_k=top_k,
+        namespace=namespace,
+        include_metadata=True
+    )
 
     retrieved_docs = []
     for doc in docs['matches']:
@@ -73,7 +83,7 @@ def prompt_with_context_builder(query, docs):
         str: O prompt construído.
     """
     delim = '\n\n---\n\n'
-    prompt_start = 'Responda a questão baseado no contexto a seguir.\n\nContexto:\n'
+    prompt_start = 'Responda a questão baseado no contexto a seguir.\n\nContexto:\n'  # noqa 401
     prompt_end = f'\n\nQuestão: {query}\nResposta:'
 
     prompt = prompt_start + delim.join(docs) + prompt_end
@@ -86,7 +96,7 @@ def qa():
     Manipula a rota /qa para responder perguntas.
 
     Returns:
-        flask.Response: A resposta JSON contendo a resposta ou uma mensagem de erro.
+        flask.Response: A resposta JSON contendo a resposta ou uma mensagem de erro.  # noqa 401
     """
     data = request.json
     question = data.get('question')
@@ -111,7 +121,7 @@ def qa():
     )
 
     # usa o OpenAI para gerar a resposta
-    sys_prompt = "Você é um assistente prestativo que sempre responde a perguntas."
+    sys_prompt = "Você é um assistente prestativo que sempre responde a perguntas."  # noqa 401
 
     res = client.chat.completions.create(
         model='gpt-3.5-turbo',
@@ -123,8 +133,8 @@ def qa():
     )
 
     answer = res.choices[0].message.content.strip()
-    response_json = json.dumps({'answer': answer}, ensure_ascii=False, indent=4)
-    return app.response_class(response=response_json, status=200, mimetype='application/json')
+    response_json = json.dumps({'answer': answer}, ensure_ascii=False, indent=4)  # noqa 401
+    return app.response_class(response=response_json, status=200, mimetype='application/json')  # noqa 401
 
 
 if __name__ == '__main__':

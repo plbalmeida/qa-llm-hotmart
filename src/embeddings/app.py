@@ -1,4 +1,5 @@
 import itertools
+import json
 import numpy as np
 import os
 import pandas as pd
@@ -20,20 +21,24 @@ if not openai_api_key or not pinecone_api_key:
 client = OpenAI(api_key=openai_api_key)
 pc = Pinecone(api_key=pinecone_api_key)
 
-index_name = 'hotmart-blog-index'
+index_name = 'data-vectors-index'
 
 if index_name not in pc.list_indexes().names():
-    print(f"Creating index: {index_name}")
-    pc.create_index(
-        name=index_name,
-        dimension=1536,
-        spec=ServerlessSpec(
-            cloud='aws',
-            region='us-east-1'
+    try:
+        print(f"Creating index: {index_name}")
+        pc.create_index(
+            name=index_name,
+            dimension=1536,
+            spec=ServerlessSpec(
+                cloud='aws',
+                region='us-east-1'
+            )
         )
-    )
+    except Exception as e:
+        print(e)
+        pass
 
-index = pc.Index(index_name)    
+index = pc.Index(index_name)
 
 
 def sliding_chunks(iterable, chunk_size, overlap):
@@ -47,7 +52,7 @@ def sliding_chunks(iterable, chunk_size, overlap):
 
     Returns:
         iterador: Um iterador que produz chunks sobrepostos do iterável original.
-    """
+    """  # noqa 401
     if chunk_size <= overlap:
         raise ValueError("chunk_size deve ser maior que overlap")
 
@@ -55,7 +60,7 @@ def sliding_chunks(iterable, chunk_size, overlap):
     chunk = tuple(itertools.islice(it, chunk_size))
     while len(chunk) == chunk_size:
         yield chunk
-        chunk = chunk[overlap:] + tuple(itertools.islice(it, chunk_size - overlap))
+        chunk = chunk[overlap:] + tuple(itertools.islice(it, chunk_size - overlap))  # noqa 401
 
 
 def encode_and_storage(df):
@@ -75,7 +80,7 @@ def encode_and_storage(df):
         ids = [str(uuid4()) for _ in range(len(texts))]
 
         # encode do texto com OpenAI
-        response = client.embeddings.create(input=texts, model='text-embedding-3-small')
+        response = client.embeddings.create(input=texts, model='text-embedding-3-small')  # noqa 401
         embeds = [np.array(x.embedding) for x in response.data]
 
         # upsert dos vetores no Pinecone
@@ -103,13 +108,14 @@ def embed_text():
         return jsonify({'error': str(e)}), 500
 
     try:
-        text_chunks = [f"{' '.join(chunk)}" for chunk in sliding_chunks(lines, chunk_size=100, overlap=50)]
+        text_chunks = [f"{' '.join(chunk)}" for chunk in sliding_chunks(lines, chunk_size=100, overlap=50)]  # noqa 401
         chunks_df = pd.DataFrame({"text": text_chunks})
         encode_and_storage(chunks_df)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-    return jsonify({'status': 'embeddings saved'})
+    response_json = json.dumps({'status': 'embeddings saved'}, ensure_ascii=False, indent=4)  # noqa 401
+    return app.response_class(response=response_json, status=200, mimetype='application/json')  # noqa 401
 
 
 if __name__ == '__main__':

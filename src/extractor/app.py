@@ -1,3 +1,4 @@
+import json
 import os
 import requests
 from bs4 import BeautifulSoup
@@ -8,6 +9,7 @@ app = Flask(__name__)
 
 if not os.path.exists('data'):
     os.makedirs('data')
+
 
 @app.route('/extract', methods=['POST'])
 def extract_text():
@@ -39,7 +41,8 @@ def extract_text():
     with open(filename, 'w', encoding='utf-8') as file:
         file.write(text_content)
 
-    return jsonify({'text': text_content})
+    response_json = json.dumps({'status': 'text extraction saved'}, ensure_ascii=False, indent=4)  # noqa 401
+    return app.response_class(response=response_json, status=200, mimetype='application/json')  # noqa 401
 
 
 if __name__ == '__main__':

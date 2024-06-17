@@ -4,6 +4,8 @@ services:
   extractor:
     build: ./src/extractor
     container_name: extractor
+    volumes:
+      - ./data:/app/data
     ports:
       - "5001:5001"
     environment:
@@ -12,6 +14,8 @@ services:
   embeddings:
     build: ./src/embeddings
     container_name: embeddings
+    volumes:
+      - ./data:/app/data
     depends_on:
       - extractor
     ports:
