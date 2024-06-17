@@ -2,7 +2,7 @@ import os
 import tempfile
 import pytest
 from flask import Flask  # noqa 401
-from src.extractor.app import app
+from extractor.app import app
 
 
 @pytest.fixture

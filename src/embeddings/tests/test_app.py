@@ -3,7 +3,7 @@ import tempfile
 import pytest
 from unittest.mock import patch, MagicMock  # noqa 401
 from flask import Flask  # noqa 401
-from src.embeddings.app import app, encode_and_storage  # noqa 401
+from embeddings.app import app, encode_and_storage  # noqa 401
 
 
 @pytest.fixture

@@ -3,7 +3,7 @@ import tempfile
 import pytest
 from unittest.mock import patch, MagicMock
 from flask import Flask  # noqa 401
-from src.api.app import app, retrieve, prompt_with_context_builder  # noqa 401
+from api.app import app, retrieve, prompt_with_context_builder  # noqa 401
 
 
 @pytest.fixture

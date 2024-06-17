@@ -51,6 +51,9 @@ jobs:
           pip install -r src/extractor/requirements.txt
           pip install pytest pytest-mock requests_mock
 
+      - name: Set PYTHONPATH
+        run: echo "PYTHONPATH=$PYTHONPATH:$(pwd)/src" >> $GITHUB_ENV
+
       - name: Run tests
         run: |
           pytest src/api/tests
