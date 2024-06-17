@@ -154,10 +154,10 @@ Reforçando que para esse projeto, o job de deploy não coloca a aplicação em 
 
 Algumas sugestões de melhoria:
 
-- Adicionar mais testes unitários: adicionar mais testes para cobrir cenários adicionais e garantir uma maior cobertura de código;
-- Cobertura de testes: criação de job de checagem de cobertura de testes pelas aplicações na esteira de CI/CD;
-- Automação de deploy em diferentes ambientes: automatizar o deploy para diferentes ambientes (desenvolvimento, homologação, produção) com diferentes pipelines;
-- Monitoração e alertas: configuração de monitoramento e alertas para avaliação de performarce dos serviços e do modelo de LLM provisionado;
+- `Adicionar mais testes unitários`: adicionar mais testes para cobrir cenários adicionais e garantir uma maior cobertura de código;
+- `Cobertura de testes`: criação de job de checagem de cobertura de testes pelas aplicações na esteira de CI/CD;
+- `Automação de deploy em diferentes ambientes`: automatizar o deploy para diferentes ambientes (desenvolvimento, homologação, produção) com diferentes pipelines;
+- `Monitoração e alertas`: configuração de monitoramento e alertas para avaliação de performarce dos serviços e do modelo de LLM provisionado;
 
 ## Contribuições
 
