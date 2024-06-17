@@ -51,7 +51,7 @@ def test_extract_text_invalid_url(client, requests_mock):
     Testa a extração de texto com uma URL inválida, esperando um erro 500.
     """
     test_url = 'http://invalid-url.com'
-    requests_mock.get(test_url, exc=Exception('Invalid URL'))
+    requests_mock.get(test_url, status_code=404, text='Not Found')
 
     response = client.post('/extract', json={'url': test_url})
     assert response.status_code == 500
