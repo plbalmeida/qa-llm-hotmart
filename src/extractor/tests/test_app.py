@@ -7,6 +7,9 @@ from extractor.app import app
 
 @pytest.fixture
 def client():
+    """
+    Configura o cliente de teste do Flask para o aplicativo.
+    """
     db_fd, app.config['DATABASE'] = tempfile.mkstemp()
     app.config['TESTING'] = True
     client = app.test_client()

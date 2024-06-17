@@ -4,7 +4,6 @@ import requests
 from bs4 import BeautifulSoup
 from flask import Flask, request, jsonify
 
-
 app = Flask(__name__)
 
 if not os.path.exists('data'):
