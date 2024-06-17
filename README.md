@@ -12,12 +12,12 @@ A solução consiste em uma arquitetura RAG (Retrieval-Augmented Generation), o 
 As três componentes são provisionadas localmente com `docker-compose.yml`.
 
 O projeto foi desenvolvido com a seguinte stack: 
-- `**Python**`: para criação dos scripts e implementação da solução;
-- `**Docker**`: para containerizar a solução;
-- `**Open AI**`: como a API de modelo treinado de LLM para a geração de texto e tarefa de embedding;
-- `**Pinecode**`: para banco de dados de vetores;
-- `**git**`: para versionamento de código;
--`**GitHub Actions**`: para esteira de CI/CD, nesse projeto o foco maior é para a parte de CI;
+- `Python`: para criação dos scripts e implementação da solução;
+- `Docker`: para containerizar a solução;
+- `OpenAI`: como a API de modelo treinado de LLM para a geração de texto e tarefa de embedding;
+- `Pinecode`: para banco de dados de vetores;
+- `git`: para versionamento de código;
+- `GitHub Actions`: para esteira de CI/CD, nesse projeto o foco maior é para a parte de CI;
 
 Oprojeto tem a seguinte estrutura do repositório:
 
