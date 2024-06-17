@@ -134,6 +134,10 @@ docker-compose down
 
 Foi criada um esteira de CI/CD com jons de lint para checagem de estilo do código, testes unitários e deploy.
 
+Para funcionar, é necessário colocar as chaves no secrets do projeto:
+
+![](figures/github_secrets.png)
+
 Ao realizar o merge para branch `main`, o mesmo é executado:
 
 ![](figures/github_actions.png)
