@@ -11,12 +11,36 @@ A solução consiste em uma arquitetura RAG (Retrieval-Augmented Generation), o 
 
 As três componentes são provisionadas localmente com `docker-compose.yml`.
 
-O projeto foi desenvolvido com a seguinte stack: Python, Docker, Open AI, Pinecode e git.
+O projeto foi desenvolvido com a seguinte stack: Python, Docker, Open AI, Pinecode, git e GitHub Actions.
 
 Estrutura do repositório:
 
 ```
-
+├── README.md
+├── data
+├── diagrama
+│   ├── diagrama.drawio
+│   └── diagrama.png
+├── docker-compose.yml
+└── src
+    ├── api
+    │   ├── Dockerfile
+    │   ├── app.py
+    │   ├── requirements.txt
+    │   └── tests
+    │       └── test_app.py
+    ├── embeddings
+    │   ├── Dockerfile
+    │   ├── app.py
+    │   ├── requirements.txt
+    │   └── tests
+    │       └── test_app.py
+    └── extractor
+        ├── Dockerfile
+        ├── app.py
+        ├── requirements.txt
+        └── tests
+            └── test_app.py
 ```
 
 Para execução do presente projeto, é preciso clonar o repositório:
