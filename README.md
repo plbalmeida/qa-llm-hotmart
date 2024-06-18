@@ -2,7 +2,7 @@
 
 ## Desenho de arquitetura da solução
 
-![](diagrama/diagrama.png)
+![](diagram/diagram.png)
 
 A solução consiste em uma arquitetura RAG (Retrieval-Augmented Generation), o qual possui as seguintes componentes:
 - componente `extractor` para extração de texto de uma URL;
