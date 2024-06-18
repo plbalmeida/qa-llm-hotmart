@@ -19,8 +19,8 @@ def extract_text():
         url (str): URL da qual o texto será extraído.
 
     Returns:
-        json: JSON contendo o texto extraído ou uma mensagem de erro.
-    """
+        flask.Response: A resposta JSON contendo a resposta ou uma mensagem de erro.
+    """  # noqa 401
     data = request.json
     url = data.get('url')
 

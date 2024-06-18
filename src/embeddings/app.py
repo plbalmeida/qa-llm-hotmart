@@ -92,7 +92,13 @@ def embed_text():
     """
     Lê o arquivo de texto especificado e cria embeddings para o conteúdo,
     salvando-os no Pinecone.
-    """
+    
+    Args:
+        file_path (str): O path do arquivo de texto extraído pelo extractor.
+
+    Returns:
+        flask.Response: A resposta JSON contendo a resposta ou uma mensagem de erro.
+    """   # noqa 401
     data = request.json
     file_path = data.get('file_path')
 

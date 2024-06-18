@@ -95,9 +95,12 @@ def qa():
     """
     Manipula a rota /qa para responder perguntas.
 
+    Args:
+        question (str): A pergunta para o chatGPT.
+
     Returns:
-        flask.Response: A resposta JSON contendo a resposta ou uma mensagem de erro.  # noqa 401
-    """
+        flask.Response: A resposta JSON contendo a resposta ou uma mensagem de erro.
+    """  # noqa 401
     data = request.json
     question = data.get('question')
 
