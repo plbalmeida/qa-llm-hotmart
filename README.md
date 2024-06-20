@@ -15,7 +15,7 @@ O projeto foi desenvolvido com a seguinte stack:
 - `Python`: para criação dos scripts e implementação da solução;
 - `Docker`: para containerizar a solução;
 - `OpenAI`: como a API de modelo treinado de LLM para a geração de texto e tarefa de embedding;
-- `Pinecode`: para banco de dados de vetores;
+- `Pinecone`: para banco de dados de vetores;
 - `git`: para versionamento de código;
 - `GitHub Actions`: para esteira de CI/CD, nesse projeto o foco maior é para a parte de CI;
 
